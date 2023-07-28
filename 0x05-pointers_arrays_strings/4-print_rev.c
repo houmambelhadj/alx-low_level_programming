@@ -1,20 +1,20 @@
 #include"main.h"
 
 /**
- * _puts - put str.
- * @str: str.
- * Return: NA.
+ * print_rev - chaeck code
+ * @s: str.
+ * Return: noo.
  */
 
-void _puts(char *str)
+void print_rev(char *s)
 {
-	int	i;
+	int	len;
 
-	i = 0;
-	while (str[i])
-	{
-		_putchar(str[i]);
-		i++;
-	}
+	len = 0;
+	while (s[len])
+		len++;
+	len--;
+	while (len >= 0)
+		_putchar(s[len--]);
 	_putchar('\n');
 }
