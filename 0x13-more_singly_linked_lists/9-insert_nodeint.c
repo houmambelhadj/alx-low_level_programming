@@ -2,52 +2,41 @@
 #include <stdlib.h>
 
 /**
- * insert_nodeint_at_index - function that inserts a new node at,
- * a given position.
- * @head: pointer to pointer to the head of linked list.
- * @idx: index of the list where the new node should be added.
- * @n: value of the new node.
+ * insert_nodeint_at_index - inserting a new node at agiven postion
+ * @head: double pointer
+ * @idx: index of the node
+ * @n: new node value
  *
- * if it is not possible to add the new node at index idx, do not,
- * add the new node and return NULL.
- *
- * Return:  the address of the new node, or NULL if it failed.
+ * Return: the address of new node
  */
-
 listint_t *insert_nodeint_at_index(listint_t **head, unsigned int idx, int n)
 {
-	listint_t *new_node, *traverse;
-	unsigned int i = 0;
-	/* if there is no list return null */
+	unsigned int i;
+	listint_t *temp, *new;
+
 	if (head == NULL)
 		return (NULL);
-	/* create the new node */
-	new_node = malloc(sizeof(listint_t));
-	if (new_node == NULL)
+	if (idx != 0)
+	{
+		temp = *head;
+		for (i = 0; i < idx - 1 && temp != NULL; i++)
+		{
+			temp = temp->next;
+		}
+		if (temp == NULL)
+			return (NULL);
+	}
+	new = malloc(sizeof(listint_t));
+	if (new == NULL)
 		return (NULL);
-	/* access the n field of the new_node and initialize it as n */
-	new_node->n = n;
-	/* check if idx = 0 */
+	new->n = n;
 	if (idx == 0)
 	{
-		/* access the next field of new_node and assign it as first node */
-		new_node->next = *head;
-		*head = new_node;
-		return (new_node);
+		new->next = *head;
+		*head = new;
+		return (new);
 	}
-	/* make traverse be the value at head */
-	traverse = *head;
-	while (i != idx - 1 && traverse != NULL)
-	{
-		traverse = traverse->next;
-		i++;
-	}
-
-	if (i == idx - 1 && traverse != NULL)
-	{
-		new_node->next = traverse->next;
-		traverse->next = new_node;
-		return (new_node);
-	}
-	return (NULL);
+	new->next = temp->next;
+	temp->next = new;
+	return (new);
 }

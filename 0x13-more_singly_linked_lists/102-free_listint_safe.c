@@ -3,50 +3,63 @@
 #include <stdio.h>
 
 /**
- * free_listint_safe - function that frees a listint_t list.
- * @h: pointer to pointer to the head of linked list.
+ * _ra - reallocates memory for an array of pointers
+ * to the nodes in a linked list
+ * @list: the old list to append
+ * @size: size of the new list (always one more than the old list)
+ * @new: new node to add to the list
  *
- * This function can free lists with a loop.
- * You should go through the list only once.
- * The function sets the head to NULL.
- *
- * Return: the size of the list that was free’d. Otherwise 0.
+ * Return: pointer to the new list
  */
-
-size_t free_listint_safe(listint_t **h)
+listint_t **_ra(listint_t **list, size_t size, listint_t *new)
 {
-	listint_t *current;
-	listnode_t *nodes = NULL; /* stores address of nodes */
-	size_t count = 0;
+	listint_t **newlist;
+	size_t i;
 
-	if (h == NULL)
-		return (0);
-
-	/* while you have not encountered a loop */
-	while (!is_in_nodes(nodes, *h))
+	newlist = malloc(size * sizeof(listint_t *));
+	if (newlist == NULL)
 	{
-		/* check if the malloc fails then exit */
-		if (!add_nodeptr(&nodes, *h))
-		{
-			free_listnode(nodes);
-			exit(98);
-		}
-		current = *h;
-		*h = (*h)->next;
-		free(current);
-		/* print address of current node and the value of field n */
-		/* cast it a void pointer in order to print the address */
-		/* printf("[%p] %d\n", (void *)head, head->n); */
-		/* count the nodes */
-		count++;
+		free(list);
+		exit(98);
 	}
-	/* if you encounter a loop */
-	if (*h != NULL)
-		*h = NULL;
+	for (i = 0; i < size - 1; i++)
+		newlist[i] = list[i];
+	newlist[i] = new;
+	free(list);
+	return (newlist);
+}
 
-	/* print where the loop starts */
-	/*	printf("-> [%p] %d\n", (void *)head, head->n); */
-	free_listnode(nodes);
-	/* return number of nodes */
-	return (count);
+/**
+ * free_listint_safe - frees a listint_t linked list.
+ * @head: double pointer to the start of the list
+ *
+ * Return: the number of nodes in the list
+ */
+size_t free_listint_safe(listint_t **head)
+{
+	size_t i, num = 0;
+	listint_t **list = NULL;
+	listint_t *next;
+
+	if (head == NULL || *head == NULL)
+		return (num);
+	while (*head != NULL)
+	{
+		for (i = 0; i < num; i++)
+		{
+			if (*head == list[i])
+			{
+				*head = NULL;
+				free(list);
+				return (num);
+			}
+		}
+		num++;
+		list = _ra(list, num, *head);
+		next = (*head)->next;
+		free(*head);
+		*head = next;
+	}
+	free(list);
+	return (num);
 }
